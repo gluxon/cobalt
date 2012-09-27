@@ -59,54 +59,6 @@ function GetCommentAmount($id) {
 	$comment=$mysql->query("SELECT id FROM comment WHERE parentid='" . $mysql->real_escape_string($id) . "'");
 	return $comment->num_rows;
 }
-// Load Comment
-function LoadComment($id, $width) {
-	global $user, $node, $mysql, $theme, $ABSBASE;
-	$comment=$mysql->query("SELECT * FROM comment WHERE id='" . $mysql->real_escape_string($id) . "'");
-	If ($comment!==FALSE) $comment=$comment->fetch_array(MYSQLI_ASSOC);
-	$theme_ini=parse_ini_file("themes/$theme/theme.ini", TRUE);
-	//$width=str_replace('%', '', $theme_ini["comments"]["width"]);
-	$shrink=str_replace('%', '', $theme_ini["comments"]["shrink"]);
-
-	echo '<div class="comment" style="margin-left: ' . $width . '% ;">';
-	echo '<h2>' . $comment["title"] . '</h2>' . "\n";
-	If (strpbrk($user["role"], 'admin') || strpbrk($user["role"], 'moderator') || $user["uid"]==$comment["uid"]) {
-		echo '<div class="controls">' . "\n";
-		echo '<div class="button edit">' . "\n";
-		echo '<a href="' . $ABSBASE . 'comment/' . $comment["id"] . '/edit">' . "\n";
-		echo '<img src="' . $ABSBASE . 'files/forum/edit.png" alt="Edit" />' . "\n";
-		//echo '<div class="edit-text">Edit</div>' . "\n";
-		echo '</a>' . "\n";
-		echo '</div>' . "\n";
-		echo '<div class="button delete">' . "\n";
-		echo '<a href="' . $ABSBASE . 'comment/' . $comment["id"] . '/delete">' . "\n";
-		echo '<img src="' . $ABSBASE . 'files/forum/delete.png" alt="Delete" />' . "\n";
-		//echo '<div class="edit-text">Delete</div>' . "\n";
-		echo '</a>' . "\n";
-		echo '</div>' . "\n";
-		echo '</div>' . "\n";
-	}
-	If (!empty($comment["created"])) {
-		$year=substr($comment["created"], 0, 4);
-		$month=substr($comment["created"], 4, 2);
-		$day=substr($comment["created"], 6, 2);
-		$hour=substr($comment["created"], 8, 2);
-		$minute=substr($comment["created"], 10, 2);
-		$second=substr($comment["created"], 12, 2);
-		$ouser=$mysql->query("SELECT username FROM users WHERE uid='" . $comment["uid"] . "'");
-		$ouser=$ouser->fetch_array(MYSQLI_NUM);
-		echo '<p class="meta"><a href="' . $ABSBASE . 'user/' . $comment["uid"] . '">' . $ouser["0"] . '</a> - <time datetime="' . $year . '-' . $month . '-' . $day . 'T' . $hour . ':' . $minute . ':' . $second . '" pubdate>' . $month . '-' . $day . '-' .$year . ' - ' . $hour . ':' . $minute . ':' .$second . '</time></p>' . "\n";
-	}
-	DisplayContent($comment["content"], $comment["format"]);
-	echo '<p class="reply"><a href="' . $ABSBASE . 'comment/' . $comment["id"] . '/add">Reply</a></p>' . "\n";
-	echo '</div>' . "\n";
-	$comment=$mysql->query("SELECT id FROM comment WHERE parentthread='" . $mysql->real_escape_string($comment["id"]) . "' AND parentid='" . $mysql->real_escape_string($node["id"]) . "' ORDER BY created ASC");
-	While ($row=$comment->fetch_array(MYSQLI_ASSOC)) {
-		If ($comment!==FALSE) {
-			LoadComment($row["id"], $width+5);
-		}
-	}
-}
 // Function to check if a table exists
 function table_exists($mysql, $table_name) {
 	$result=$mysql->query("SHOW TABLES LIKE '" . $table_name . "'");
