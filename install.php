@@ -51,7 +51,6 @@ else {
 	}
 	// Stage 0: Installer just started
 	else {
-		session_start();
 		$_SESSION["stage"]="1";
 	}
 	$install_stage=$_SESSION["stage"];
