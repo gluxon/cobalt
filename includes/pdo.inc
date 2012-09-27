@@ -561,12 +561,12 @@ class NappalComments extends NappalUser {
 			echo '<div class="controls">' . "\n";
 			echo '	<div class="button edit">' . "\n";
 			echo '		<a href="' . $ABSBASE . 'comment/' . $comment["id"] . '/edit">' . "\n";
-			echo '		<img src="' . $ABSBASE . 'files/forum/edit.png" alt="Edit" />' . "\n";
+			echo '		<img src="' . $ABSBASE . RESOURCES_PATH . '/pages/edit.png" alt="Edit" />' . "\n";
 			echo '		</a>' . "\n";
 			echo '	</div>' . "\n";
 			echo '	<div class="button delete">' . "\n";
 			echo '		<a href="' . $ABSBASE . 'comment/' . $comment["id"] . '/delete">' . "\n";
-			echo '		<img src="' . $ABSBASE . 'files/forum/delete.png" alt="Delete" />' . "\n";
+			echo '		<img src="' . $ABSBASE . RESOURCES_PATH . '/pages/delete.png" alt="Delete" />' . "\n";
 			echo '		</a>' . "\n";
 			echo '	</div>' . "\n";
 			echo '</div>' . "\n";
