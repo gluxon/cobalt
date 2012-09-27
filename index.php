@@ -32,6 +32,10 @@ include(INCLUDES_PATH . "/pdo.inc"); // Cobalt's PDO library
 include(SETTINGS_PATH . "/general.php"); // general cobalt settings
 include(SETTINGS_PATH . "/sql.php"); // SQL connection settings
 
+if (empty($database)) {
+	header('Location: install.php');
+}
+
 // FireStats
 if (file_exists('firestats/php/db-hit.php')) {
 	include('firestats/php/db-hit.php');
