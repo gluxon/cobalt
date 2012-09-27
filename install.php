@@ -19,7 +19,7 @@ if (!empty($database["host"]) && !empty($database["user"]) && !empty($database["
 			$_SESSION["stage"]="1";
 			$install_stage="1";
 		}
-		
+
 		// Stage 4: Website setup data
 		if (!empty($_POST["admin_site_name"])) {
 			if (!empty($_POST["admin_site_name"]))
@@ -32,7 +32,7 @@ if (!empty($database["host"]) && !empty($database["user"]) && !empty($database["
 			$mysql->query("INSERT INTO settings (setting, value) VALUES ('site_keywords', '" . $mysql->real_escape_string($_POST["admin_site_keywords"]) . "')");
 			if (!empty($_POST["admin_site_author"]))
 			$mysql->query("INSERT INTO settings (setting, value) VALUES ('site_author', '" . $mysql->real_escape_string($_POST["admin_site_author"]) . "')");
-			
+
 			$mysql->query("UPDATE settings SET value='5' WHERE setting='install_stage'");
 			header('Location: ?page=5');
 		}
@@ -142,7 +142,7 @@ echo $install_stage;
 
 					if (!isset($database_sucess)) {
 						echo '<p>Unnamed CMS requires an SQL database to store website information and content. Below, please provide database connection details.</p>';
-						
+
 						if (isset($_POST["database_server"]) && empty($_POST["database_server"])) {
 							echo 'No database server was defined' . "\n";
 							echo '<br />' . "\n";
@@ -163,9 +163,9 @@ echo $install_stage;
 							echo '<br />' . "\n";
 							$error='1';
 						}
-						
+
 						echo '<p>'. "\n";
-	
+
 						echo '<form action="' . $_SERVER["REQUEST_URI"] . '" method="post">' . "\n";
 						echo '<strong>Database Server:</strong><input type="text" value="' . "\n";
 						if (isset($_POST["database_server"])) {
@@ -175,7 +175,7 @@ echo $install_stage;
 							echo 'localhost';
 						}
 						echo '" size="15" name="database_server" style="margin-bottom: 1px;" />' . "\n";
-	
+
 						echo '<strong>Port:</strong><input type="text" value="' . "\n";
 						if (isset($_POST["database_port"])) {
 							echo $_POST["database_port"];
@@ -184,29 +184,29 @@ echo $install_stage;
 							echo '3306';
 						}
 						echo '" size="4" name="database_port" style="margin-bottom: 1px;" />' . "\n";
-						
+
 						echo '<br />';
-	
+
 						echo '<strong>Database User:</strong><input type="text" value="' . "\n";
 						if (isset($_POST["database_user"])) {
 							$_POST["database_user"];
 						}
 						echo '" size="15" name="database_user" style="margin-bottom: 1px;" />' . "\n";
-	
+
 						echo '<br />';
-	
+
 						echo '<strong>Database Password:</strong><input type="password" size="15" name="database_password" style="margin-bottom: 1px;" />' . "\n";
-	
+
 						echo '<br />';
-	
+
 						echo '<strong>Database Name:</strong><input type="text" value="' . "\n";
 						if (isset($_POST["database_name"])) {
 							$_POST["database_name"];
 						}
 						echo '" size="15" name="database_name" style="margin-bottom: 1px;" />' . "\n";
-	
+
 						echo '<br />';
-	
+
 						echo '<input type="submit" value="Submit" />' . "\n";
 						echo '</form>' . "\n";
 						echo '</p>' . "\n";
