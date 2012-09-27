@@ -1,0 +1,238 @@
+body {
+	background: #000000 url("background.png") repeat scroll 100% 100%; color: #FFFFFF;
+	font-family: Georgia, "Bitstream Charter", Cambria, Times, "Times New Roman", serif; font-size: 14px; font-weight: normal;
+	margin: 0; padding: 0;
+}
+/* Inline Items */
+a:link {
+	color: #FEFE0A; text-decoration: none;
+}
+a:visited {
+	color: #FEFE0A; text-decoration: none;
+}
+a:active {
+	color: #FEFE0A; text-decoration:none; text-shadow: #FFFFFF 0px 0px 2px;
+}
+a:hover, a:focus {
+	color: #FEFE0A; text-shadow: #FFFFFF 0px 0px 0px; text-decoration: underline;
+}
+img {
+	border: none;
+}
+h1 {
+	color: #fff;
+	font-family: Georgia, "Times New Roman", serif; font-size: 32px; font-style: italic; font-weight: normal;
+}
+h2 {
+	color: #FFFF44; margin:auto;
+	font-family: "Trebuchet MS", Trebuchet, sans-serif; font-size: 22px; font-weight:normal; text-align:center;
+}
+h3 {
+	background-color: #230093; color: #fff; margin: 10px 0 16px;
+	font-size: 16px; font-weight: normal; text-align: center;
+}
+.title-date {
+	color: #fefe0a;
+	text-align: right; text-decoration: underline;
+}
+input, textarea, select {
+	background: #f6f7f8; color: #333; border: solid 1px #bdb8b8; outline: 0;
+	background: -moz-linear-gradient(top, #cccbcb, #f6f7f8 4px); background: -webkit-gradient(linear, 0% 0%, 0% 4, from(#cccbcb), color-stop(4%, #cccbcb), to(#f6f7f8));
+	padding: 3px;
+}
+input[type="button"], input[type="submit"], button {
+	background: #cccbcb; background: -moz-linear-gradient(top, #f6f7f8, #cccbcb 8px); background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f6f7f8), color-stop(8, #cccbcb), to(#cccbcb));
+}
+input:hover, textarea:hover, select:hover, input:focus, textarea:focus {
+	border-color: #8d8888; box-shadow: rgba(80,0,0, 0.1) 0px 0px 4px; -moz-box-shadow: rgba(80,0,0, 0.1) 0px 0px 4px; -webkit-box-shadow: rgba(80,0,0, 0.1) 0px 0px 4px;}.strike {	text-decoration: line-through;
+}
+b, strong {
+	font-weight: bold;
+}
+i, em, cite {
+	font-style: italic;
+}
+blockquote {
+	margin: 16px 32px; position: relative;
+}
+blockquote:before {
+	content: " \201c";
+	font-size: 48px; line-height: 48px;
+	position: absolute; margin-left: -32px;
+}
+blockquote:after {
+	content: " \201d";
+	font-size: 48px; line-height: 48px;
+	position: absolute; right: 0; margin-right: -32px;
+}
+.add-comment {
+	display: block;
+	float: left;
+}
+.reply {
+	display: block;
+}
+.see-more {
+	/* USE THIS FOR ALIGNING "SEE OLDER NEWS" TO THE RIGHT!!!!!! */
+	display: block; float: right;
+}
+.see-more:after {
+	content: " \00bb";
+}
+/* Layout */
+#wrapper {
+	background-color: #3377C0; color: #FFFFFF; border: 2px solid #FFFFFF;
+	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
+	box-shadow: 0 0 1px black inset, 0 0 1px black, 0 0 10px white; -moz-box-shadow: 0 0 1px black inset, 0 0 1px black, 0 0 10px white; -webkit-box-shadow: 0 0 1px black inset, 0 0 1px black, 0 0 10px white;
+	text-shadow: 1px -1px 0 #004490;
+	overflow: hidden;
+	margin: 16px auto; width: 760px;
+}
+#header {
+	color: #FFFFFF; text-align: center;
+	display: block;
+	margin: auto;
+}
+/* Navigation */
+#nav {
+	font-weight:bold; list-style-type: none;
+	overflow: hidden; margin: 0; padding: 5px 0 5px 225px;
+}
+#nav li {
+	float: left; margin: auto; padding: 0 5px;
+}
+#nav li a {
+	color:#FFFFFF;
+}
+#nav li ul {
+	background: rgba(0, 0, 0, 0.5) repeat; color: #fff;
+	border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
+	font-weight: normal;
+	text-shadow: 1px -1px black;
+	list-style: none;
+	display: none;
+	padding: 3px; width: 180px; position: absolute;
+}
+#nav li:hover ul {
+	display: block;
+}
+#nav li ul li {
+	float: none; position: relative;
+}
+#nav li ul li ul {
+	display: none;
+	margin: -20px 0 0 1px;
+	position: absolute; left: 100%;
+}
+#nav li:hover ul li ul {
+	display: none;
+}
+#nav li ul li:hover ul {
+	display: block;
+}
+/* Sidebar */
+#sidebar {
+	background-color: #2B64A1;
+	color: #FFFFFF; text-align: left;
+	box-shadow: -20px 0 20px -20px black inset, 0 20px 20px -20px black inset; -moz-box-shadow: -20px 0 20px -20px black inset, 0 20px 20px -20px black inset; -webkit-box-shadow: -20px 0 20px -20px black inset, 0 20px 20px -20px black inset;
+	float: left;
+	padding: 10px; width: 195px;
+}
+.sidebar-block {
+	color: #FFFFFF; text-align: left;
+	margin: auto; padding: 10px 0 5px;
+}
+.sidebar-paragraph {
+	font-size:12px;
+}
+.login-block {
+	color: #FFFFFF; text-align: center;
+	margin: auto; padding: 10px 0 5px;
+}
+.admin-block {
+	width: 250px;
+	margin: 5px;
+}
+.form-required {
+	margin: 3px;
+	color: #FFAE00;
+}
+#register-block {
+	color: #FFFFFF; text-align: center;	margin: auto; padding: 10px 0 5px;
+}
+.controls {
+	text-align: right;
+	margin-top: -20px;
+}
+.edit {
+	float: right;
+	margin: 0 24px 0 -48px;
+}
+.delete {
+}
+#forum {
+	border-width: 1px; border-spacing: 0; border-collapse: collapse;
+	margin: auto;
+	margin-top: 10px;
+}
+#forum thead th {
+	border-color: #FFFFFF; border-style: solid; border-width: 1px;
+	margin: 0; padding: 4px;
+}
+#forum thead tr {
+	border-color: #FFFFFF; border-style: solid; border-width: 1px;
+	margin: 0; padding: 4px;
+}
+#forum thead #topic {
+	width: 400px;
+}
+#forum thead #icon {
+	width: 16px;
+}
+#forum tbody td {
+	border-color: #FFFFFF; border-style: solid; border-width: 1px;
+	margin: 0; padding: 4px;
+}
+/* Content */
+#content {
+	background-color: #3377C0; color: #FFFFFF; text-align: left;
+	box-shadow: 0 20px 20px -20px black inset, -20px 0 20px -20px black, -215px 0 0 #2B64A1; -moz-box-shadow: 0 20px 20px -20px black inset, -20px 0 20px -20px black, -215px 0 0 #2B64A1; -webkit-box-shadow: 0 20px 20px -20px black inset, -20px 0 20px -20px black, -215px 0 0 #2B64A1;
+	display: block; float: right;
+	padding: 10px; width: 525px;
+}
+#content article {
+	display: block; overflow: hidden;
+}
+#comments {
+}
+#contact {
+	color: #FFFFFF; text-align: center;
+}
+.comment {
+	margin: 10px 0;	border: 1px solid #99BBE0; padding: 2px 10px 0px;
+	box-shadow: -1px 1px 1px -1px black; -moz-box-shadow: -1px 1px 1px -1px black; -webkit-box-shadow: -1px 1px 1px -1px black;
+}
+figure {
+	text-align: center; display: block; margin: 16px 0;
+}
+figcaption {
+	font-style: italic; text-align: center;
+	display: block;
+}
+.meta {
+	text-align: right;
+}
+.blog-post {
+	margin-bottom: 70px;
+}
+#download-box {
+	width: 200px;
+	height: 60px;
+	margin: 10px;
+	-moz-transition: -moz-box-shadow 1s;
+	-moz-border-radius: 3px;
+	background-image: url("http://gluxon.tk/files/images/download-box.png");
+}
+.download-box:hover {
+	-moz-box-shadow: 0 0 3px 3px #64cafe; -webkit-box-shadow: 0 0 3px 3px #64cafe; box-shadow: 0 0 3px 3px #64cafe;
+}
