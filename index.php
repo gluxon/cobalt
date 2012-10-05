@@ -1145,7 +1145,7 @@ foreach ($body as $current_line) {
 							$day=substr($row["created"], 6, 2);
 
 							$post_username = $user->getUsername($row["uid"]);
-							echo '	<p class="meta">Published by <a href="' . $ABSBASE . 'user/' . $row["uid"] . '">' . $post_username . '</a> on <time datetime="' . $year . '-' . $month . '-' . $day . '" pubdate>' . $month . '-' . $day . '-' .$year . '</time></p>' . "\n";
+							echo '	<p class="meta">Published by <a href="' . $ABSBASE . 'user/' . $row["uid"] . '">' . $post_username . '</a> on <time datetime="' . $year . '-' . $month . '-' . $day . '">' . $month . '-' . $day . '-' .$year . '</time></p>' . "\n";
 
 							$cut=strpos(substr($row["content"], 300), "\n");
 							if ($cut < 200) {
@@ -1250,7 +1250,7 @@ foreach ($body as $current_line) {
 						} else {
 							echo $admin_site_slogan;
 						}
-					echo '" size="15" slogan="admin_site_slogan" style="margin: 1px;" /><br />' . "\n";
+					echo '" size="15" name="admin_site_slogan" style="margin: 1px;" /><br />' . "\n";
 
 					echo '<strong>Website description:</strong><input type="text" value="';
 						if (!empty($_POST["admin_site_description"])) {
@@ -1258,7 +1258,7 @@ foreach ($body as $current_line) {
 						} else {
 							echo $admin_site_description;
 						}
-					echo '" size="15" description="admin_site_description" style="margin: 1px;" /><br />' . "\n";
+					echo '" size="15" name="admin_site_description" style="margin: 1px;" /><br />' . "\n";
 
 					echo '<strong>Website keyword:</strong><input type="text" value="';
 						if (!empty($_POST["admin_site_keywords"])) {
@@ -1266,7 +1266,7 @@ foreach ($body as $current_line) {
 						} else {
 							echo $admin_site_keywords;
 						}
-					echo '" size="15" keyword="admin_site_keyword" style="margin: 1px;" /><br />' . "\n";
+					echo '" size="15" name="admin_site_keyword" style="margin: 1px;" /><br />' . "\n";
 
 					echo '<strong>Website author:</strong><input type="text" value="';
 						if (!empty($_POST["admin_site_author"])) {
@@ -1274,7 +1274,7 @@ foreach ($body as $current_line) {
 						} else {
 							echo $admin_site_author;
 						}
-					echo '" size="15" author="admin_site_author" style="margin: 1px;" /><br />' . "\n";
+					echo '" size="15" name="admin_site_author" style="margin: 1px;" /><br />' . "\n";
 
 					echo '<strong>Website homepage:</strong><input type="text" value="';
 						if (!empty($_POST["admin_site_homepage"])) {
@@ -1282,7 +1282,8 @@ foreach ($body as $current_line) {
 						} else {
 							echo $admin_site_homepage;
 						}
-					echo '" size="15" homepage="admin_site_homepage" style="margin: 1px;" /><br />' . "\n";
+					echo '" size="15" name="admin_site_homepage" style="margin: 1px;" /><br />' . "\n";
+
 					echo '<input type="submit" value="Submit" /><br />' . "\n";
 					echo '</form>' . "\n";
 				}
@@ -1350,7 +1351,7 @@ foreach ($body as $current_line) {
 						$minute=substr($node["created"], 10, 2);
 						$second=substr($node["created"], 12, 2);
 						$ouser = $user->findWithUID($node["uid"]);
-						echo '<p class="meta"><a href="' . $ABSBASE . 'user/' . $node["uid"] . '">' . $ouser["username"] . '</a> - <time datetime="' . $year . '-' . $month . '-' . $day . 'T' . $hour . ':' . $minute . ':' . $second . '" pubdate>' . $month . '-' . $day . '-' .$year . ' - ' . $hour . ':' . $minute . ':' .$second . '</time></p>' . "\n";
+						echo '<p class="meta"><a href="' . $ABSBASE . 'user/' . $node["uid"] . '">' . $ouser["username"] . '</a> - <time datetime="' . $year . '-' . $month . '-' . $day . 'T' . $hour . ':' . $minute . ':' . $second . '">' . $month . '-' . $day . '-' .$year . ' - ' . $hour . ':' . $minute . ':' .$second . '</time></p>' . "\n";
 					}
 					DisplayContent($node["content"], $node["format"]);
 				}
