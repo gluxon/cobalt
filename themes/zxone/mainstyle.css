@@ -14,10 +14,10 @@ body {
 
 	/*background: url("carbonfiber.png");*/
 
-	min-width: 780px;
+	/*min-width: 780px;*/
 
 	font-family: Verdana, Sans, "Bitstream Charter", Cambria, Times, "Times New Roman", serif; font-size: 12px; font-weight: normal;
-	margin: 0; padding: 0 5%;
+	margin: 0; padding: 0 4%;
 }
 
 /* Inline Items */
