@@ -65,14 +65,10 @@ figcaption {
 
 /* Layout */
 #wrapper {
-	margin: auto;
 	max-width: 1020px;
+	margin: auto;
 }
 #header {
-	color: #FFFFFF; text-align: center; display: block;
-	margin: 10px auto 0; padding: 0 10px;
-	height: 50px;
-
 	background: #0099CC;
 
 	background: linear-gradient(center top, #0099CC, #003399);
@@ -84,6 +80,9 @@ figcaption {
 	background: -ms-linear-gradient(center top, #0099CC, #003399);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#0099CC, endColorstr=#003399);
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#0099CC, endColorstr=#003399)";
+
+	color: #FFFFFF; text-align: center; display: block;
+	margin: 10px auto 0; padding: 0 10px;
 
 	border-radius: 5px;
 	box-shadow: 0px 4px 7px 0px rgba(0, 0, 0, 0.8);
@@ -107,73 +106,79 @@ figcaption {
 
 /* Navigation */
 nav {
-	display: inline-block; text-align: center;
+	font-size: 0px; /* Fix inline-block spacing problem (issue #5) */
 }
 #nav {
-	border-style: solid; border-width: 1px; border-top: none; border-bottom: none; border-left-color: #000000; border-right-color: #336699;
-	font-family: Helvetica, sans-serif; font-weight: normal; text-align: left;
+	display: inline-block; text-align: center;
 
 	margin: 0; padding: 0;
+	font-family: Helvetica, sans-serif; font-weight: normal; text-align: left;
 	list-style-type: none;
-	overflow: hidden;
+
+	border-style: solid; border-width: 1px; border-top: none; border-bottom: none; border-left-color: #000000; border-right-color: #336699;
 }
 #nav li {
-	-moz-transition-property: text-shadow, background, box-shadow; -webkit-transition-property: text-shadow, background, box-shadow; -ms-transition-property: text-shadow, background, box-shadow; -o-transition-property: text-shadow, background, box-shadow; transition-property: text-shadow, background, box-shadow;
-	-moz-transition-duration: 0.2s; -webkit-transition-duration: 0.2s; -ms-transition-duration: 0.2s; -o-transition-duration: 0.2s; transition-duration: 0.2s;
-	-moz-transition-timing-fuction: ease-in; -webkit-transition-timing-fuction: ease-in; -ms-transition-timing-fuction: ease-in; -o-transition-timing-fuction: ease-in; transition-timing-fuction: ease-in;
+	float: left;
 
 	border-style: solid; border-width: 1px; border-top: none; border-bottom: none; border-left-color: #336699; border-right-color: #000000;
 
-	height: 50px;
-	float: left;
+	-moz-transition-property: text-shadow, box-shadow; -webkit-transition-property: text-shadow, box-shadow; -ms-transition-property: text-shadow, box-shadow; -o-transition-property: text-shadow, box-shadow; transition-property: text-shadow, box-shadow;
+	-moz-transition-duration: 0.2s; -webkit-transition-duration: 0.2s; -ms-transition-duration: 0.2s; -o-transition-duration: 0.2s; transition-duration: 0.2s;
+	-moz-transition-timing-fuction: ease-in; -webkit-transition-timing-fuction: ease-in; -ms-transition-timing-fuction: ease-in; -o-transition-timing-fuction: ease-in; transition-timing-fuction: ease-in;
 }
 #nav li:hover {
 	box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.8);
 	text-shadow: 0px 0px 5px #FFFFFF;
 }
 #nav li a {
-	font-size: 20px;
-	display: block; height: 30px;
-	margin: auto; padding: 10px 15px;
-	color: #FFFFFF;
+	margin: auto; padding: 11px 15px;
+
+	color: #FFFFFF; font-size: 20px;
 	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8); text-decoration: none;
+
+	display: block; 
 }
 #nav li ul {
 	background-color: rgba(0, 70, 161, 0.9);
+
+	min-width: 160px;
+	margin: 0; padding: 0;
+
 	border-radius: 0 0 5px 5px;
 	font-weight: normal;
 	list-style: none;
 	display: none;
-	margin: 0; padding: 0; min-width: 160px; position: absolute;
+	position: absolute;
 }
 #nav li:hover ul {
 	box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.9), 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
 	display: block;
 }
 #nav li ul li {
-	-moz-transition-property: text-shadow, box-shadow; -webkit-transition-property: text-shadow, box-shadow; -ms-transition-property: text-shadow, box-shadow; -o-transition-property: text-shadow, box-shadow; transition-property: text-shadow, box-shadow;
-
-	height: auto;
 	padding: 0;
+
 	border-left: none; border-right: none;
 	font-size: 15px; text-shadow: 1px 1px 0px #000000;
 	float: none; position: relative;
+
+	-moz-transition-property: text-shadow, box-shadow; -webkit-transition-property: text-shadow, box-shadow; -ms-transition-property: text-shadow, box-shadow; -o-transition-property: text-shadow, box-shadow; transition-property: text-shadow, box-shadow;
 }
 #nav li ul li:hover {
 	box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.8);
 	text-shadow: 1px 1px 0px #000000, 0px 0px 1px #FFFFFF;
 }
 #nav li ul li a {
-	height: 20px;
-	padding: 5px 10px;
+	padding: 4px 10px;
 	font-size: 15px; font-align: left;
 }
 
 #nav li ul li ul {
-	display: none; border-radius: 5px;
 	margin: -30px 0 0 0;
+	border-radius: 5px;
+	display: none;
 	position: absolute; left: 100%;
 }
+
 #nav li:hover ul li ul {
 	display: none;
 }
