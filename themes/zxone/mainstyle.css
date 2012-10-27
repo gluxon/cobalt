@@ -391,3 +391,21 @@ select:hover {
 select:focus {
 	border-style: solid; border-width: 1px; border-color: hsla(206,100%,60%,.5) hsla(206,100%,50%,.5) hsla(206,100%,40%,.5);
 }
+
+@media screen and (max-width: 760px) {
+	body {
+		padding: 0 3%;
+	}
+	#header h1 {
+		font-size: 25px;
+		margin: 2px 0 0 5px;
+	}
+	#nav li a {
+		font-size: 16px;
+		padding: 9px 13px;
+	}
+	#nav li ul li a {
+		font-size: 12px;
+		padding: 4px 10px;
+	}
+}
