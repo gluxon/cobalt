@@ -16,7 +16,10 @@ body {
 
 	/*min-width: 780px;*/
 
-	font-family: Verdana, Sans, "Bitstream Charter", Cambria, Times, "Times New Roman", serif; font-size: 12px; font-weight: normal;
+	font-size: 13px; font-weight: normal;
+	font-family: Verdana, Sans, "Bitstream Charter", Cambria, Times, "Times New Roman", serif;
+	-webkit-text-size-adjust:100%;
+
 	margin: 0; padding: 0 4%;
 }
 
@@ -71,8 +74,8 @@ figcaption {
 #header {
 	background: #0099CC;
 
-	background: linear-gradient(center top, #0099CC, #003399);
-	background: -moz-linear-gradient(center top , #0099CC, #003399) repeat scroll 0 0 transparent;
+	background: linear-gradient(#0099CC, #003399);
+	background: -moz-linear-gradient(#0099CC, #003399) repeat scroll 0 0 transparent;
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(#0099CC), color-stop(#003399));
 	background: -webkit-linear-gradient(top, #0099CC, #003399);
 	background: -o-linear-gradient(top, #0099CC, #003399);
@@ -124,7 +127,7 @@ nav {
 
 	-moz-transition-property: text-shadow, box-shadow; -webkit-transition-property: text-shadow, box-shadow; -ms-transition-property: text-shadow, box-shadow; -o-transition-property: text-shadow, box-shadow; transition-property: text-shadow, box-shadow;
 	-moz-transition-duration: 0.2s; -webkit-transition-duration: 0.2s; -ms-transition-duration: 0.2s; -o-transition-duration: 0.2s; transition-duration: 0.2s;
-	-moz-transition-timing-fuction: ease-in; -webkit-transition-timing-fuction: ease-in; -ms-transition-timing-fuction: ease-in; -o-transition-timing-fuction: ease-in; transition-timing-fuction: ease-in;
+	-moz-transition-timing-function: ease-in; -webkit-transition-timing-function: ease-in; -ms-transition-timing-function: ease-in; -o-transition-timing-function: ease-in; transition-timing-function: ease-in;
 }
 #nav li:hover {
 	box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.8);
@@ -169,7 +172,7 @@ nav {
 }
 #nav li ul li a {
 	padding: 5px 10px;
-	font-size: 15px; font-align: left;
+	font-size: 15px;
 }
 
 #nav li ul li ul {
@@ -407,5 +410,33 @@ select:focus {
 	#nav li ul li a {
 		font-size: 12px;
 		padding: 4px 10px;
+	}
+	#content {
+		margin-left: -160px;
+	}
+	#content article {
+		margin: 0 0 10px 160px;
+	}
+	#sidebar {
+		width: 160px;
+	}
+	.login-block input[type="text"], .login-block input[type="password"] {
+		width: 100%;
+	}
+}
+@media screen and (max-width: 600px) {
+	#content {
+		float: none;
+		margin: 0;
+	}
+	#content article {
+		margin: 0 0 10px; padding: 10px 3px;
+	}
+	#sidebar {
+		float: none;
+		width: 200px;
+	}
+	.login-block input[type="text"], .login-block input[type="password"] {
+		width: 160px;
 	}
 }
