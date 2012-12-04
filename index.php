@@ -509,6 +509,7 @@ if (isset($homepage)) {
 <meta name="description" content="<?php echo $site["description"] ?>" />
 <meta name="keywords" content="<?php echo $site["keywords"] ?>" />
 <meta name="author" content="<?php echo $site["author"] ?>" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="<?php echo $ABSBASE . THEMES_PATH . '/' . $theme; ?>/mainstyle.css" />
 
@@ -1215,7 +1216,8 @@ foreach ($body as $current_line) {
 							$dbho->updateSetting('site_name', $_POST["admin_site_name"]);
 						if (!empty($_POST["admin_site_slogan"]))
 							$dbho->updateSetting('site_slogan', $_POST["admin_site_slogan"]);
-						if (!empty($_POST["admin_site_description"]))							$dbho->updateSetting('site_description', $_POST["admin_site_description"]);
+						if (!empty($_POST["admin_site_description"]))
+							$dbho->updateSetting('site_description', $_POST["admin_site_description"]);
 						if (!empty($_POST["admin_site_keywords"]))
 							$dbho->updateSetting('site_keywords', $_POST["admin_site_keywords"]);
 						if (!empty($_POST["admin_site_author"]))
