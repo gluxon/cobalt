@@ -120,6 +120,7 @@ if (empty($_GET["q"])) {
 
 // This is on purpose in contrast the the last if statement (homepage setting)
 if (!empty($_GET["q"])) {
+
 	// Check if the URL is an assigned alias
 	$alias = $dbho->getURLWithAlias($_GET["q"]);
 	if (!empty($alias)) {
@@ -130,63 +131,63 @@ if (!empty($_GET["q"])) {
 	$q=explode("/", $_GET["q"]);
 
 	// We do not need to check $q["0"] because $_GET["q"] is not empty.
+
 	// This is a node page
-	if (!empty($q["1"]) && is_numeric($q["1"]) && $q["0"]=="node") {
+	if (isset($q["1"]) && is_numeric($q["1"]) && $q["0"]=="node") {
 
 		// Load the page
 		$node = $nodehandle->findWithNID($q["1"]);
 
-		// Page exists! It wasn't a failure!
-		if ($node !== false) {
-			$title=$node["title"];
-
-			if (!empty($q["2"])) switch ($q["2"]) {
-				// User wants to add a comment to the page
-				case 'add':
-					// If the user is logged in, comments are enabled for the page, and has proper permissions, let it roll!
-					if ( !empty($current_user) && $dbho->hasPermission($current_user, "addcomment", $node) ) {
-						$title='Add a Comment';
-						$load='addcomment';
-					} else {
-						$nodehandle->set403();
-					}
-				break;
-
-				// User wants to edit the page
-				case 'edit':
-					if ( !empty($current_user) && $dbho->hasPermission($current_user, "editnode", $node) ) {
-						$title="Edit Post";
-						$load='editnode';
-					} else {
-						$nodehandle->set403();
-					}
-				break;
-
-				// User wants to delete the page! No!!! :'(
-				case 'delete':
-					if ( !empty($current_user) && $dbho->hasPermission($current_user, "deletenode", $node) ) {
-						// Delete confirmed! Commence operation!
-						if (isset($_GET["confirm"])) {
-							$nodehandle->delete($node["id"]);
-							header('Location: /');
-						// Delete confirmation page
-						} else {
-							$title='Delete Post?';
-							$load='deletenode';
-							unset($node);
-						}
-					// We don't have permission to do this sire!
-					} else {
-						$nodehandle->set403();
-					}
-				break;
-
-				default:
-					$nodehandle->set404();
-			}
-		// Page load was a failure, 404
-		} else {
+		if ($node === false) {
+			// Page load was a failure, 404
 			$nodehandle->set404();
+		} else if (!isset($q["2"])) {
+			// Page load success, set the title
+			$title=$node["title"];
+		} else if (isset($q["2"])) {
+			// User wants to add a comment to the page
+			if ( $q["2"] == 'add' ) {
+				// If the user is logged in, comments are enabled for the page, and has proper permissions, let it roll!
+				if ( !empty($current_user) && $dbho->hasPermission($current_user, "addcomment", $node) ) {
+					$title='Add a Comment';
+					$load='addcomment';
+				} else {
+					$nodehandle->set403();
+				}
+			}
+
+			// User wants to edit the page
+			else if ( $q["2"] == 'edit' ) {
+				if ( !empty($current_user) && $dbho->hasPermission($current_user, "editnode", $node) ) {
+					$title="Edit Post";
+					$load='editnode';
+				} else {
+					$nodehandle->set403();
+				}
+			}
+
+			// User wants to delete the page! No!!! :'(
+			else if ( $q["2"] == 'delete' ) {
+				if ( !empty($current_user) && $dbho->hasPermission($current_user, "deletenode", $node) ) {
+					// Delete confirmed! Commence operation!
+					if (isset($_GET["confirm"])) {
+						$nodehandle->delete($node["id"]);
+						header('Location: /');
+					// Delete confirmation page
+					} else {
+						$title='Delete Post?';
+						$load='deletenode';
+						unset($node);
+					}
+				// We don't have permission to do this sire!
+				} else {
+					$nodehandle->set403();
+				}
+			}
+
+			else {
+				$nodehandle->set404();
+			}
 		}
 
 	// This is a commment
@@ -195,200 +196,197 @@ if (!empty($_GET["q"])) {
 		// Load the comment
 		$comment = $commenthandle->findWithCID($q["1"]);
 
-		// Comment exists!
-		if ($comment !== false) {
+		if ($comment === false) {
+			// Comment Load was a failure 404
+			$nodehandle->set404();
+		} else if (!isset($q["2"])) {
+			// comment exists
 			$title=$comment["title"];
+		} else if (isset($q["2"])) {
 
-			if (!empty($q["2"])) switch ($q["2"]) {
+			// User wants to add a reply
+			if ($q["2"] == 'add') {
+				$thread = $nodehandle->findWithNID($commenthandle->getParentThread($comment["id"]));
+				if ( !empty($current_user) && $dbho->hasPermission($current_user, "addreply", $thread) ) {
+					$title='Add Reply';
+					$load='addreply';
+				} else {
+					$nodehandle->set403();
+				}
+			}
 
-				// User wants to add a reply
-				case 'add':
-					$thread = $nodehandle->findWithNID($commenthandle->getParentThread($comment["id"]));
-					if ( !empty($current_user) && $dbho->hasPermission($current_user, "addreply", $thread) ) {
-						$title='Add Reply';
-						$load='addreply';
-					} else {
-						$nodehandle->set403();
-					}
-				break;
+			// User wants to edit the comment
+			else if ($q["2"] == 'edit') {
+				$thread = $nodehandle->findWithNID($commenthandle->getParentThread($comment["id"]));
+				if ( !empty($current_user) && $dbho->hasPermission( $current_user, "editcomment", $thread, $comment) ) {
+					$title='Edit Comment';
+					$load='editcomment';
+				}
+				else {
+					$nodehandle->set403();
+				}
+			}
 
-				// User wants to edit the comment
-				case 'edit':
-					if ( !empty($current_user) && $dbho->hasPermission( $current_user, "editcomment", $comment["id"]) ) {
-						$title='Edit Comment';
-						$load='editcomment';
+			// User wants to delete the page! No!!! :'(
+			else if ($q["2"] == 'delete') {
+				if ( !empty($current_user) && $dbho->hasPermission( $current_user, "deletecomment", $comment) ) {
+					// Delete confirmed! Commence operation!
+					if (isset($_GET["confirm"])) {
+						// Get comment nid before deleting
+						$node["nid"]=$commenthandle->getParentThread($comment["id"]);
+						$commenthandle->delete($comment["id"]);
+						header('Location: ' . $ABSBASE . 'node/' . $node["nid"]);
 					}
 					else {
+						$title='Delete Comment?';
+						$load='deletecomment';
+						unset($comment);
+					}
+				// We don't have permission to do this sire!
+				} else {
+					$nodehandle->set403();
+				}
+			}
+
+		}
+
+	// Nappal page
+	} else {
+
+		// User pages
+		if ($q["0"] == 'user') {
+			switch ($q["1"]) {
+				case 'login':
+					$title="Log In";
+					$load="login";
+				break;
+				case 'register':
+					if (!empty($current_user)) {
 						$nodehandle->set403();
 					}
+					else {
+						$title="Register";
+						$load="register";
+					}
 				break;
+				case 'logout':
+					setcookie("id", "", time() - 3600);
+					setcookie("password", "", time() - 3600);
+					session_destroy();
+					header('Location: /');
+				break;
+				case 'password':
+					$title="Password Reset";
+					$load="resetpassword";
+				break;
+				default:
+					// Personal User Pages
+					$user_profile=$user->findWithUID($q["1"]);
+					if ($user_profile !== false) {
+						$title=$user_profile["username"];
+						$load='account';
+					}
+					else {
+						$nodehandle->set404();
+					}
+			}
+		}
 
-				// User wants to delete the page! No!!! :'(
-				case 'delete':
-					if ( !empty($current_user) && $dbho->hasPermission( $current_user, "deletecomment", $comment) ) {
-						// Delete confirmed! Commence operation!
-						if (isset($_GET["confirm"])) {
-							// Get comment nid before deleting
-							$node["nid"]=$commenthandle->getParentThread($comment["id"]);
-							$commenthandle->delete($comment["id"]);
-							header('Location: ' . $ABSBASE . 'node/' . $node["nid"]);
-						}
-						else {
-							$title='Delete Comment?';
-							$load='deletecomment';
-							unset($comment);
-						}
-					// We don't have permission to do this sire!
+		// Node pages
+		else if ($q["0"] == 'node') {
+			switch ($q["1"]) {
+				case 'add':
+					if ( !empty($current_user) && $dbho->hasPermission($current_user, "addnode") ) {
+						$title="New Post";
+						$load="addnode";
 					} else {
 						$nodehandle->set403();
 					}
 				break;
-
 				default:
 					$nodehandle->set404();
 			}
-		// Comment Load was a failure 404
-		} else {
-			$nodehandle->set404();
 		}
-	// Nappal page
-	} else {
-		switch ($q["0"]) {
 
-			// User pages
-			case 'user':
-				switch ($q["1"]) {
-					case 'login':
-						$title="Log In";
-						$load="login";
-					break;
-					case 'register':
-						if (!empty($current_user)) {
-							$nodehandle->set403();
-						}
-						else {
-							$title="Register";
-							$load="register";
-						}
-					break;
-					case 'logout':
-						setcookie("id", "", time() - 3600);
-						setcookie("password", "", time() - 3600);
-						session_destroy();
-						header('Location: /');
-					break;
-					case 'password':
-						$title="Password Reset";
-						$load="resetpassword";
-					break;
-					default:
-						// Personal User Pages
-						$user_profile=$user->findWithUID($q["1"]);
-						if ($user_profile !== false) {
-							$title=$user_profile["username"];
-							$load='account';
-						}
-						else {
-							$nodehandle->set404();
-						}
-				}
-			break;
-
-			// Node pages
-			case 'node':
-				switch ($q["1"]) {
-					case 'add':
-						if ( !empty($current_user) && $dbho->hasPermission($current_user, "addnode") ) {
-							$title="New Post";
-							$load="addnode";
-						} else {
-							$nodehandle->set403();
-						}
-					break;
-					default:
-						$nodehandle->set404();
-				}
-			break;
-
-			// Forum
-			case 'forum':
-				if (empty($q["1"])) {
-					$title='Forums';
-					$load='forum-landing';
-				} else if (empty($q["2"])) {
-					$forum=$forumhandle->getForumContainer($q["1"]);
-					if ($forum !== false) {
-						$title=$forum["name"] . " Forum Container";
-						$load='forumcontainer';
-					} else {
-						$nodehandle->set404();
-					}
-				} else if (empty($q["3"])) {
-					$container=$forumhandle->getForumContainer($q["1"]);
-					$forum=$forumhandle->getForum($container["id"], $q["2"]);
-
-					if ($forum !== false) {
-						$title=$forum["name"];
-						$load='forum';
-					} else {
-						$nodehandle->set404();
-					}
+		// Forum
+		else if ($q["0"] == 'forum') {
+			if (empty($q["1"])) {
+				$title='Forums';
+				$load='forum-landing';
+			} else if (empty($q["2"])) {
+				$forum=$forumhandle->getForumContainer($q["1"]);
+				if ($forum !== false) {
+					$title=$forum["name"] . " Forum Container";
+					$load='forumcontainer';
 				} else {
 					$nodehandle->set404();
 				}
-			break;
+			} else if (empty($q["3"])) {
+				$container=$forumhandle->getForumContainer($q["1"]);
+				$forum=$forumhandle->getForum($container["id"], $q["2"]);
 
-			// Blog
-			case 'blog':
-				$title='Blog';
-				$load='blog';
-			break;
+				if ($forum !== false) {
+					$title=$forum["name"];
+					$load='forum';
+				} else {
+					$nodehandle->set404();
+				}
+			} else {
+				$nodehandle->set404();
+			}
+		}
 
-			case 'admin':
-				if (!empty($current_user) && $dbho->hasPermission($current_user, "adminpanel")) {
+		// Blog
+		else if ($q["0"] == 'blog') {
+			$title='Blog';
+			$load='blog';
+		}
 
-					if (empty($q["1"])) {
-						$title='Admin';
-						$load='admin';
-					} else if (empty($q["2"])) switch ($q["1"]) {
-						case 'theme':
-							$title='Themes';
-							$load='admin-theme';
+		else if ($q["0"] == 'admin') {
+			if (!empty($current_user) && $dbho->hasPermission($current_user, "adminpanel")) {
 
-							// Having this here allows it to pass the hasPermission
-							if (!empty($_POST["admin_theme"])) {
-								$dbho->updateSetting("theme", $_POST["admin_theme"]);
-							}
-						break;
+				if (empty($q["1"])) {
+					$title='Admin';
+					$load='admin';
+				} else if (empty($q["2"])) switch ($q["1"]) {
+					case 'theme':
+						$title='Themes';
+						$load='admin-theme';
 
-						case 'aliases':
-							$title='Aliases';
-							$load='admin-aliases';
-						break;
+						// Having this here allows it to pass the hasPermission
+						if (!empty($_POST["admin_theme"])) {
+							$dbho->updateSetting("theme", $_POST["admin_theme"]);
+						}
+					break;
 
-						case 'site':
-							$title='Site Information';
-							$load='admin-site';
-						break;
+					case 'aliases':
+						$title='Aliases';
+						$load='admin-aliases';
+					break;
 
-						default:
-							$nodehandle->set404();
-					}
-					else {
+					case 'site':
+						$title='Site Information';
+						$load='admin-site';
+					break;
+
+					default:
 						$nodehandle->set404();
-					}
-
+				}
+				else {
+					$nodehandle->set404();
 				}
 
-			break;
+			}
 
-			case 'tracker':
-				$title='Tracker';
-				$load='tracker';
-			break;
+		}
 
-			default:
-				$nodehandle->set404();
+		else if ($q["0"] == 'tracker') {
+			$title='Tracker';
+			$load='tracker';
+		}
+
+		else {
+			$nodehandle->set404();
 		}
 	}
 }
