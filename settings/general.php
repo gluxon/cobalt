@@ -1,3 +1,3 @@
 <?php
-$online='yes';
+$online = true;
 ?>

@@ -1,5 +1,5 @@
 <?php
-// REMOVE MAGIC QUOTES!!!
+// Remove Magic Quotes
 if (get_magic_quotes_gpc()) {
 	$process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
 	while (list($key, $val) = each($process)) {
@@ -15,10 +15,11 @@ if (get_magic_quotes_gpc()) {
 	}
 	unset($process);
 }
-// ENABLE NOTICES FOR DEBUGGING
+
+// Enable Notices for Debugging
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// SET TIMEZONE
+// Set Timezone
 date_default_timezone_set('America/New_York');
 ?>

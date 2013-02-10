@@ -1,4 +1,8 @@
 <?php
+function println($string) {
+	echo $string . "\n";
+}
+
 // Generate a 403 or 404 page
 function page_error($error_code) {
 	global $RELBASE, $ABSBASE;

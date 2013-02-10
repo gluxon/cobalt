@@ -1,6 +1,6 @@
 <?php
 class NappalDatabase {
-	private $getSettingStatement;
+	private $getSettingStmt;
 	private $updateSettingStatement;
 	private $getURLWithAliasStatement;
 	private $getBlocksStatement;
@@ -17,9 +17,14 @@ class NappalDatabase {
 	 * @throws PDOException exception from pdo
 	 */
 	public function connect($host, $name, $user, $password) {
-		global $dbh; // we should be safe declaring this global, since its only an instance
+		global $dbh; // change this
 		$dsn = 'mysql';
 		$dbh = new PDO($dsn.':host=' . $host . ';dbname=' . $name, $user, $password);
+		$this->dbh = $dbh;
+	}
+
+	public function getInstance() {
+		return $this->dbh;
 	}
 
 	public function lastInsertId() {
@@ -35,12 +40,13 @@ class NappalDatabase {
 	 * @return mixed value in setting
 	 */
 	public function getSetting($setting) {
-		global $dbh;
-		if (is_null($this->getSettingStatement)) {
-			$this->getSettingStatement = $dbh->prepare("SELECT value FROM settings WHERE setting = ?");
+
+		if (is_null($this->getSettingStmt)) {
+			$this->getSettingStmt = $this->dbh->prepare("SELECT value FROM settings WHERE setting = ?");
 		}
-		$this->getSettingStatement->execute(array($setting));
-		$return = $this->getSettingStatement->fetch(PDO::FETCH_NUM);
+
+		$this->getSettingStmt->execute(array($setting));
+		$return = $this->getSettingStmt->fetch(PDO::FETCH_NUM);
 		return $return['0'];
 	}
 
