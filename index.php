@@ -158,6 +158,7 @@ $template->printHead(array(
 $blocks = new Blocks(array(
 	'database' => $database,
 	'format' => $format,
+	'module' => $module,
 	'theme_dir' => THEMES_PATH,
 	'theme' => $theme,
 	'base' => $base
@@ -168,4 +169,7 @@ $template->printBody(array(
 	'module' => $module,
 	'base' => $base
 ));
+
+// End the HTML document
+$template->printEnd();
 ?>

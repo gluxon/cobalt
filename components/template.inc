@@ -86,7 +86,10 @@ class Template {
 
 			}
 		}
+	}
 
+	public function printEnd() {
+		println('</html>');
 	}
 }
 ?>

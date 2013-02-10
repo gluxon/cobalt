@@ -5,6 +5,7 @@ class Blocks {
 	private $format;
 	private $theme_dir;
 	private $theme;
+	private $module;
 	private $base;
 
 	private $dbho;
@@ -13,6 +14,7 @@ class Blocks {
 
 	public function __construct($options) {
 		$this->database = (empty($options["database"])) ? null : $options["database"];
+		$this->module = (empty($options["module"])) ? null : $options["module"];
 		$this->format = (empty($options["format"])) ? null : $options["format"];
 		$this->theme_dir = (empty($options["theme_dir"])) ? null : $options["theme_dir"];
 		$this->theme = (empty($options["theme"])) ? null : $options["theme"];
@@ -33,7 +35,7 @@ class Blocks {
 
 	public function printBlocks($options) {
 		$blockname = (empty($options["blockname"])) ? null : $options["blockname"];
-		$module = (empty($options["module"])) ? null : $options["module"];
+		$module = (empty($options["module"])) ? $this->module : $options["module"];
 
 		switch ($blockname) {
 			case 'lsidebar':
