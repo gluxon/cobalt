@@ -32,6 +32,7 @@ include(COMPONENTS_PATH . '/' . 'module.inc');
 include(COMPONENTS_PATH . '/' . 'node.inc');
 include(COMPONENTS_PATH . '/' . 'permissions.inc');
 include(COMPONENTS_PATH . '/' . 'request.inc');
+include(COMPONENTS_PATH . '/' . 'roles.inc');
 include(COMPONENTS_PATH . '/' . 'template.inc');
 include(COMPONENTS_PATH . '/' . 'user.inc');
 

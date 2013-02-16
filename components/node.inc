@@ -30,7 +30,6 @@ class Node {
 		$this->base = (empty($options["base"])) ? null : $options["base"];
 
 		$this->dbho = $this->database->getInstance();
-
 	}
 
 	/**
@@ -93,9 +92,34 @@ class Node {
 		}
 
 		else {
+			// Output the page controls if user has permissions
+			//if ( $this->permissions->hasPermission($this->user->uid(), 'editnode') ) {
+			if (true) {
+				$this->printControls();
+			}
 			$this->format->display($this->content["content"], $this->content["format"]);
 		}
 
+	}
+
+	public function printControls() {
+		$base = $this->base;
+
+		println('<div class="controls">');
+
+		println('<div class="button edit">');
+		println('<a href="' . $base . 'node/' . $this->content["id"] . '/edit">');
+		println('<img src="' . $base . RESOURCES_PATH . '/pages/edit.png" alt="Edit" />');
+		println('</a>');
+		println('</div>');
+
+		println('<div class="button delete">');
+		println('<a href="' . $base . 'node/' . $this->content["id"] . '/delete">');
+		println('<img src="' . $base . RESOURCES_PATH . '/pages/delete.png" alt="Delete" />');
+		println('</a>');
+		println('</div>');
+
+		println('</div>');
 	}
 
 	public function printError($error_no) {
