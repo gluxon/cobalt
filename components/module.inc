@@ -47,13 +47,19 @@ class Module {
 		$module = array_shift($path);
 
 		if (empty($this->modules[$module])) {
+			$return = '404';
 			$this->title = '404';
-			return '404';
 		} else if (method_exists($this->modules[$module], 'request')) {
 			$return = $this->modules[$module]->request($path);
 			$this->title = $this->modules[$module]->title();
-			return $return;
 		}
+
+		// Special handler for node
+		if ($return == '404' && $module != 'node') {
+			$this->modules['node']->setError('404');
+		}
+
+		return $return;
 	}
 
 	public function title() {
@@ -66,6 +72,21 @@ class Module {
 		foreach($this->modules as $name => $module) {
 			if (method_exists($module, 'block') && $this->isBlockRegistered($name, $parent)) {
 				$module->block($parent);
+				$claimed = true;
+			}
+		}
+		if ($claimed) {
+			return true;
+		}
+		return false;
+	}
+
+	public function formHandler() {
+		$claimed = false;
+
+		foreach($this->modules as $name => $module) {
+			if (method_exists($module, 'formHandler')) {
+				$module->formHandler();
 				$claimed = true;
 			}
 		}

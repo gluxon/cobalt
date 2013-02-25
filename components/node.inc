@@ -32,6 +32,14 @@ class Node {
 		$this->dbho = $this->database->getInstance();
 	}
 
+	public function getError() {
+		return $this->error;
+	}
+
+	public function setError($error) {
+		$this->error = $error;
+	}
+
 	/**
 	 * Built-in requred function: Parse module's URLs
 	 * 
@@ -43,7 +51,7 @@ class Node {
 		$this->content = $this->findWithNID($path["0"]);
 
 		if ($this->content === false) {
-			$this->error = '404';
+			$this->setError('404');
 			return '404';
 		}
 		else if (!isset($path["1"])) {
@@ -87,7 +95,8 @@ class Node {
 		}
 
 		// Output an error
-		if (isset($this->error)) {
+		$error = $this->getError();
+		if (!empty($error)) {
 			$this->printError($this->error);
 		}
 
