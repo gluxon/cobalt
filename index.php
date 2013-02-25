@@ -100,7 +100,13 @@ try {
 	die('<p>' . $e->getMessage() . '</p>');
 }
 
-$user = new User($database);
+// Start the session if it hasn't started
+session_start();
+
+$user = new User(array(
+	'database' => $database,
+	'base' => $base
+));
 $permissions = new Permissions($database);
 
 $format = new Format(array(
@@ -123,6 +129,9 @@ $node = new Node(array(
 $module->addModule('node', $node);
 $module->registerBlock('node', 'content');
 
+$module->addModule('user', $user);
+$module->registerBlock('user', 'lsidebar');
+
 // Handle URL
 $request = new Request(array(
 	'database' => $database,
@@ -131,6 +140,9 @@ $request = new Request(array(
 ));
 
 $identifier = $request->parse();
+
+// Run the form handlers for each module
+$module->formHandler();
 
 // Templating
 $theme = $database->getSetting('theme');

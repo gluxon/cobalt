@@ -3,14 +3,17 @@ class User {
 
 	private $database;
 	private $dbho;
+	private $base;
 
 	private $user;
 
 	private $addUserStmt;
 	private $getUsernameStmt;
 
-	public function __construct($database) {
-		$this->database = $database;
+	public function __construct($options) {
+		$this->database = (empty($options["database"])) ? null : $options["database"];
+		$this->base = (empty($options["base"])) ? null : $options["base"];
+
 		$this->dbho = $this->database->getInstance();
 	}
 
@@ -51,7 +54,7 @@ class User {
 
 		foreach($options as $key => $val) {
 			if (!ctype_alpha($key)) {
-				// This should the key is actually an existing collumn (issue #7)
+				// This should check if the key is actually an existing collumn (issue #7)
 				throw new Exception('Invalid collumn name');
 			} else {
 				if ($counter >= 1) {
@@ -91,8 +94,60 @@ class User {
 		return !empty($this->user);
 	}
 
+	public function logout() {
+		setcookie("id", "", time() - 3600);
+		setcookie("password", "", time() - 3600);
+		session_destroy();
+		header('Location: /');
+	}
+
 	public function uid() {
 		return $this->user['uid'];
+	}
+
+	public function request($path) {
+
+		switch(@$path[0]) {
+			case 'logout':
+				$this->title = 'Logout';
+				$this->logout();
+				break;
+			default:
+				$this->title = '404';
+				return '404';
+		}
+
+	}
+
+	public function title() {
+		return $this->title;
+	}
+
+	public function formHandler() {
+
+		if (!empty($_SESSION["id"])) {
+			// We have a logged in user!
+			$this->user = $this->find(array(
+				'uid' => $_SESSION["id"]
+			));
+		}
+
+		if (!empty($_POST["username"]) && !empty($_POST["password"])) {
+			$this->user = $this->find(array(
+				'username' => $_POST["username"],
+				'password' => md5($_POST["password"])
+			));
+
+			if ($this->user !== false) {
+				$_SESSION["id"] = $this->user["uid"];
+				setcookie('id', $this->user["uid"], time() + 60*60*24*30, "/");
+				setcookie('password', hash("sha256", md5($_POST["password"])), time() + 60*60*24*30, "/");
+			}
+		}
+	}
+
+	public function block($parent) {
+		$this->printLoginBlock();
 	}
 
 	public function printLoginBlock() {
