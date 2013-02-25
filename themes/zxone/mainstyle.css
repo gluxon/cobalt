@@ -248,6 +248,7 @@ nav {
 /* Sidebar */
 #sidebar {
 	width: 200px;
+	padding-top: 10px;
 }
 .sidebar-block {
 	text-align: left;
