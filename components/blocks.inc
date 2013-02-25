@@ -40,6 +40,7 @@ class Blocks {
 		switch ($blockname) {
 			case 'lsidebar':
 			case 'rsidebar':
+				$module->block($blockname);
 				$this->printSidebarLeft();
 				break;
 			default:
