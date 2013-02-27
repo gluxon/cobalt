@@ -118,10 +118,10 @@ echo $install_stage;
 							$sql=fopen("settings/sql.php", 'w');
 							fwrite($sql,
 								'<?php' . "\n" .
-								'$database["host"]="' . $_POST["database_server"] . '";' . "\n" .
-								'$database["user"]="' . $_POST["database_user"] . '";' . "\n" .
-								'$database["password"]="' . $_POST["database_password"] . '";' . "\n" .
-								'$database["name"]="' . $_POST["database_name"] . '";' . "\n" .
+								'$connection["host"]="' . $_POST["database_server"] . '";' . "\n" .
+								'$connection["user"]="' . $_POST["database_user"] . '";' . "\n" .
+								'$connection["password"]="' . $_POST["database_password"] . '";' . "\n" .
+								'$connection["name"]="' . $_POST["database_name"] . '";' . "\n" .
 								'?>');
 
 							// Stage 3: Database check
