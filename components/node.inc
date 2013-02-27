@@ -11,6 +11,7 @@ class Node {
 
 	private $path;
 
+	private $load;
 	private $content;
 	private $title;
 
@@ -46,9 +47,18 @@ class Node {
 	 * @param array $path Exploded path from Request
 	 */
 	public function request($path) {
-		if (!is_numeric($path["0"])) return '404';
+		if ($path["0"] == 'add') {
+			$this->title = 'Add';
+			$this->load = 'add';
+		}
 
-		$this->content = $this->findWithNID($path["0"]);
+		if (!is_numeric($path["0"])) {
+			return '404';
+		}
+
+		$this->content = $this->find(array(
+			'id' => $path["0"]
+		));
 
 		if ($this->content === false) {
 			$this->setError('404');
@@ -56,36 +66,64 @@ class Node {
 		}
 		else if (!isset($path["1"])) {
 			$this->title = $this->content["title"];
+			$this->load = 'content';
 			return 'page';
 		}
-		else if (isset($path["2"])) {
-			// edit pages
+		else if (isset($path["1"])) {
+			if ($path["1"] == 'edit') {
+				$this->title = 'Edit';
+				$this->load = 'edit';
+				return 'editnode';
+			}
 		}
 	}
-	
+
 	public function title() {
 		return $this->title;
 	}
 
 	public function block($parent) {
 		if ($parent == 'content') {
-			$this->printContent();
+			$this->route();
 		}
 	}
 
-	/**
-	 * Find a node given its cid
-	 *
-	 * @param mixed $nid Node ID
-	 * @return array PDO ASSOC Array
-	 */
-	public function findWithNID($nid) {
-		$findWithNIDStmt = $this->dbho->prepare("SELECT * FROM node WHERE id = ?");
+	public function route() {
+		if ($this->load == 'content') {
+			$this->printContent();
+		} else if ($this->load == 'edit') {
+			$this->printModify();
+		} else if ($this->load == 'add') {
+			$this->printModify();
+		}
+	}
 
-		$findWithNIDStmt->execute(array($nid));
-		$node = $findWithNIDStmt->fetch(PDO::FETCH_ASSOC);
+	public function find($options) {
+		if ( empty($options) || !is_array($options) ) {
+			throw new Exception('Invalid arguments');
+		}
 
-		return $node;
+		$counter = 0;
+		$statement = 'SELECT * FROM node WHERE ';
+
+		foreach($options as $key => $val) {
+			if (!ctype_alpha($key)) {
+				// This should check if the key is actually an existing collumn (issue #7)
+				throw new Exception('Invalid collumn name');
+			} else {
+				if ($counter >= 1) {
+					$statement .= ' AND ';
+				}
+				$statement .= $key . '=?';
+				$counter++;
+			}
+		}
+
+		$values = array_values($options);
+
+		$findStmt = $this->dbho->prepare($statement);
+		$findStmt->execute($values);
+		return $findStmt->fetch(PDO::FETCH_ASSOC);
 	}
 
 	private function printContent() {
@@ -131,6 +169,40 @@ class Node {
 		println('</div>');
 	}
 
+	public function printModify() {
+		// Check if form is satisfied
+		if (isset($_POST["node_title"]) && empty($_POST["node_title"])) {
+			println('You need a title.<br />');
+			$error='1';
+		}
+
+		if (isset($_POST["node_content"]) && empty($_POST["node_content"])) {
+			println('You didn\'t type anything<br />');
+		}
+
+		println('<form action="' . $_SERVER["REQUEST_URI"] . '" method="post">');
+		echo 'Title: <input type="text" value="';
+			if (!empty($_POST["node_title"])) {
+				echo $_POST["node_title"];
+			} else if ($this->load == 'edit') {
+				echo $this->content["title"];
+			}
+		echo '" size="30" name="node_title" /><br />' . "\n";
+
+		echo 'Content:<br /><textarea style="width: 100%;" rows="30" name="node_content" />' . "\n";
+			if (!empty($_POST["node_content"])) {
+				echo $_POST["node_content"];
+			} else if (!empty($this->content["content"])) {
+				echo $this->content["content"];
+			}
+		echo '</textarea><br />' . "\n";
+
+		echo '<input type="submit" value="Submit" />' . "\n";
+		echo '</form>' . "\n";
+
+		unset($this->content);
+	}
+
 	public function printError($error_no) {
 		println('<div style="text-align: center;">');
 
@@ -149,6 +221,9 @@ class Node {
 
 		println('</p>');
 		println('</div>');
+	}
+
+	public function formHandler() {
 	}
 
 }
