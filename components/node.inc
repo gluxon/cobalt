@@ -47,12 +47,18 @@ class Node {
 	 * @param array $path Exploded path from Request
 	 */
 	public function request($path) {
+
+		// Store path
+		$this->path = $path;
+
 		if ($path["0"] == 'add') {
 			$this->title = 'Add';
 			$this->load = 'add';
+			return 'add';
 		}
 
 		if (!is_numeric($path["0"])) {
+			$this->setError('404');
 			return '404';
 		}
 
@@ -89,7 +95,9 @@ class Node {
 	}
 
 	public function route() {
-		if ($this->load == 'content') {
+		if (@$this->getError()) {
+			$this->printError();
+		} else if ($this->load == 'content') {
 			$this->printContent();
 		} else if ($this->load == 'edit') {
 			$this->printModify();
@@ -126,6 +134,47 @@ class Node {
 		return $findStmt->fetch(PDO::FETCH_ASSOC);
 	}
 
+	public function add($options) {
+
+		if ( empty($options) || !is_array($options) ) {
+			throw new Exception('Invalid arguments');
+		}
+
+		// INSERT INTO Persons (FirstName, LastName, Age)
+		// VALUES ('Peter', 'Griffin', 35)
+
+		$counter = 0;
+		$statement = 'INSERT INTO node';
+		$names = ' (';
+		$values = ' VALUES (';
+
+		foreach($options as $key => $val) {
+			if (!ctype_alpha($key)) {
+				// This should check if the key is actually an existing collumn (issue #7)
+				throw new Exception('Invalid collumn name');
+			} else {
+				if ($counter >= 1) {
+					$names .= ', ';
+					$values .= ', ';
+				}
+				$names .= $key;
+				$values .= '?';
+				$counter++;
+			}
+		}
+
+		$names .= ')';
+		$values .= ')';
+
+		$statement = $statement . $names . $values;
+
+		$values = array_values($options);
+
+		$findStmt = $this->dbho->prepare($statement);
+		$findStmt->execute($values);
+		return $findStmt->fetch(PDO::FETCH_ASSOC);
+	}
+
 	private function printContent() {
 		// Print the title if there is one
 		if (!empty($this->content['title'])) {
@@ -135,7 +184,7 @@ class Node {
 		// Output an error
 		$error = $this->getError();
 		if (!empty($error)) {
-			$this->printError($this->error);
+			$this->printError();
 		}
 
 		else {
@@ -180,6 +229,7 @@ class Node {
 			println('You didn\'t type anything<br />');
 		}
 
+		// Title
 		println('<form action="' . $_SERVER["REQUEST_URI"] . '" method="post">');
 		echo 'Title: <input type="text" value="';
 			if (!empty($_POST["node_title"])) {
@@ -189,6 +239,36 @@ class Node {
 			}
 		echo '" size="30" name="node_title" /><br />' . "\n";
 
+		// Type
+		echo 'Type: <select name="node_type">' . "\n";
+
+			echo '<option ';
+			if ((!empty($_POST["node_type"]) && $_POST["node_type"] == 'page') ||
+				(!empty($this->content['type']) && $this->content['type'] == 'page') ||
+				(isset($this->path['2']) && $this->path['2'] == 'page') ) {
+				echo 'selected="selected" ';
+			}
+			echo 'value="page">Page</option>' . "\n";
+
+			echo '<option ';
+			if ((!empty($_POST["node_type"]) && $_POST["node_type"] == 'forum') ||
+				(!empty($this->content['type']) && $this->content['type'] == 'forum') ||
+				(isset($this->path['2']) && $this->path['2'] == 'forum') ) {
+				echo 'selected="selected" ';
+			}
+			echo 'value="forum">Forum</option>' . "\n";
+
+			echo '<option ';
+			if ((!empty($_POST["node_type"]) && $_POST["node_type"] == 'blog') ||
+				(!empty($this->content['type']) && $this->content['type'] == 'blog') ||
+				(isset($this->path['2']) && $this->path['2'] == 'blog')) {
+				echo 'selected="selected" ';
+			}
+			echo 'value="blog">Blog</option>' . "\n";
+
+		echo '</select><br />' . "\n";
+
+		// Content
 		echo 'Content:<br /><textarea style="width: 100%;" rows="30" name="node_content" />' . "\n";
 			if (!empty($_POST["node_content"])) {
 				echo $_POST["node_content"];
@@ -203,12 +283,12 @@ class Node {
 		unset($this->content);
 	}
 
-	public function printError($error_no) {
+	public function printError() {
 		println('<div style="text-align: center;">');
 
 		$url = $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 
-		switch($error_no) {
+		switch($this->getError()) {
 			case '403':
 				println('<p>You don\'t have permissions to access http://' . $url . '</p>');
 				println('<p><img alt="403" src="' . $this->base . '403.png" /></p>');
@@ -225,38 +305,77 @@ class Node {
 
 	public function formHandler() {
 
+		if (!$this->user->isLoggedIn())
+			return false;
+		if (empty($_POST["node_title"]))
+			return false;
+		if (empty($_POST["node_content"]))
+			return false;
+
 		if ($this->load == 'add') {
+			$this->formAdd();
+		} else if ($this->load == 'edit')
+			$this->formEdit();
 
-			switch($_POST["node_type"]) {
-				case 'page':
-					break;
-				case 'forum':
-					break;
-				case 'blog':
-					break;
-			}
+	}
 
-			// Redirect to newly posted content
-			header('Location: ' . $this->base . 'node/' . $database->lastInsertId());
+	private function formAdd() {
 
-		} else if ($this->load == 'edit') {
+		// Note: A permissions check is needed here
 
-			switch($_POST["node_type"]) {
-				case 'page':
-					break;
-				case 'forum':
-					break;
-				case 'blog':
-					break;
-			}
-
-			header('Location: ' . $this->base . 'node/' . $this->content["id"]);
-
-		} else {
-			// Form was hijacked. Strange, because the user has privs anyway... dumb monkey
-			$nodehandle->set403();
+		switch($_POST['node_type']) {
+			case 'page':
+				$this->add(array(
+					'content' => $_POST['node_content'],
+					'title' => $_POST['node_title'],
+					'uid' => $this->user->uid(),
+					'format' => 'html',
+					'type' => 'page',
+					'status' => 'active',
+					'created' => date('YmdHis'),
+				));
+				break;
+			case 'forum':
+				$this->add(array(
+					'content' => $_POST['node_content'],
+					'title' => $_POST['node_title'],
+					'uid' => $this->user->uid(),
+					'format' => 'fhtml',
+					'type' => 'forum',
+					'status' => 'active',
+					'created' => date('YmdHis'),
+					'forum' => $this->path['2'],
+				));
+				break;
+			case 'blog':
+				$this->add(array(
+					'content' => $_POST['node_content'],
+					'title' => $_POST['node_title'],
+					'uid' => $this->user->uid(),
+					'format' => 'fhtml',
+					'type' => 'blog',
+					'status' => 'active',
+					'created' => date('YmdHis'),
+				));
+				break;
 		}
 
+		// Redirect to newly posted content
+		header('Location: ' . $this->base . 'node/' . $this->database->lastInsertId());
+	}
+
+	private function formEdit() {
+
+		switch($_POST["node_type"]) {
+			case 'page':
+				break;
+			case 'forum':
+				break;
+			case 'blog':
+				break;
+		}
+
+		header('Location: ' . $this->base . 'node/' . $this->content["id"]);
 	}
 
 }
