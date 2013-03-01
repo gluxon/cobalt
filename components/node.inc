@@ -224,6 +224,39 @@ class Node {
 	}
 
 	public function formHandler() {
+
+		if ($this->load == 'add') {
+
+			switch($_POST["node_type"]) {
+				case 'page':
+					break;
+				case 'forum':
+					break;
+				case 'blog':
+					break;
+			}
+
+			// Redirect to newly posted content
+			header('Location: ' . $this->base . 'node/' . $database->lastInsertId());
+
+		} else if ($this->load == 'edit') {
+
+			switch($_POST["node_type"]) {
+				case 'page':
+					break;
+				case 'forum':
+					break;
+				case 'blog':
+					break;
+			}
+
+			header('Location: ' . $this->base . 'node/' . $this->content["id"]);
+
+		} else {
+			// Form was hijacked. Strange, because the user has privs anyway... dumb monkey
+			$nodehandle->set403();
+		}
+
 	}
 
 }
