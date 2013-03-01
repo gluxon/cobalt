@@ -135,7 +135,6 @@ class Node {
 	}
 
 	public function add($options) {
-
 		if ( empty($options) || !is_array($options) ) {
 			throw new Exception('Invalid arguments');
 		}
@@ -170,9 +169,56 @@ class Node {
 
 		$values = array_values($options);
 
-		$findStmt = $this->dbho->prepare($statement);
-		$findStmt->execute($values);
-		return $findStmt->fetch(PDO::FETCH_ASSOC);
+		$addStmt = $this->dbho->prepare($statement);
+		return $addStmt->execute($values);
+	}
+
+	public function edit($options) {
+		if ( empty($options) || !is_array($options) ) {
+			throw new Exception('Invalid arguments');
+		}
+
+		if ( empty($options['nid']) ) {
+			throw new Exception('Missing argument node id (nid)');
+		}
+
+		// UPDATE table_name
+		// SET column1=value, column2=value2,...
+		// WHERE some_column=some_value
+
+		// Push nid to bottom of options for WHERE clause
+		$nid = $options['nid'];
+		unset($options['nid']);
+
+		$counter = 0;
+		$statement = 'UPDATE node';
+		$set = ' SET ';
+		$where = ' WHERE id=?';
+
+		foreach($options as $key => $val) {
+			if (!ctype_alpha($key)) {
+				// This should check if the key is actually an existing collumn (issue #7)
+				throw new Exception('Invalid collumn name');
+			} else {
+				if ($counter >= 1) {
+					$set .= ', ';
+				}
+				$set .= $key . '=?';
+				$counter++;
+			}
+		}
+
+		$statement = $statement . $set . $where;
+		echo $statement;
+
+		// Bring back nid for WHERE clause
+		$options['nid'] = (int) $nid;
+
+		$values = array_values($options);
+		var_dump($values);
+
+		$editStmt = $this->dbho->prepare($statement);
+		return $editStmt->execute($values);
 	}
 
 	private function printContent() {
@@ -366,12 +412,32 @@ class Node {
 
 	private function formEdit() {
 
-		switch($_POST["node_type"]) {
+		// Note: A permissions check is needed here
+
+		switch($_POST['node_type']) {
 			case 'page':
+				$this->edit(array(
+					'nid' => $this->path['0'],
+					'content' => $_POST['node_content'],
+					'title' => $_POST['node_title'],
+					'modified' => date('YmdHis')
+				));
 				break;
 			case 'forum':
+				$this->edit(array(
+					'nid' => $this->path['0'],
+					'content' => $_POST['node_content'],
+					'title' => $_POST['node_title'],
+					'modified' => date('YmdHis')
+				));
 				break;
 			case 'blog':
+				$this->edit(array(
+					'nid' => $this->path['0'],
+					'content' => $_POST['node_content'],
+					'title' => $_POST['node_title'],
+					'modified' => date('YmdHis')
+				));
 				break;
 		}
 
