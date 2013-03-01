@@ -84,7 +84,16 @@ class Module {
 	public function formHandler() {
 		$claimed = false;
 
-		foreach($this->modules as $name => $module) {
+		// Create copy for removal of user module
+		$modules = $this->modules;
+
+		// User needs to login first (user module is prioritized)
+		$modules['user']->formHandler();
+
+		// Remove user module from copy
+		unset($modules['user']);
+
+		foreach($modules as $name => $module) {
 			if (method_exists($module, 'formHandler')) {
 				$module->formHandler();
 				$claimed = true;
