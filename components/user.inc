@@ -29,6 +29,10 @@ class User {
 		$addUserStmt->execute(array($username, $password, $email));
 	}
 
+	public function uid() {
+		return $this->user['uid'];
+	}
+
 	public function getUsername($uid) {
 		// Only integer values for uid
 		if ( !is_numeric($uid) || strpbrk($uid, '.') ) {
@@ -99,10 +103,6 @@ class User {
 		setcookie("password", "", time() - 3600);
 		session_destroy();
 		header('Location: /');
-	}
-
-	public function uid() {
-		return $this->user['uid'];
 	}
 
 	public function request($path) {
