@@ -37,7 +37,7 @@ class Request {
 
 		// Send request to modules to handle
 		$return = $this->module->request($path);
-		$this->title = $this->module->title($path);
+		$this->title = $this->module->title();
 
 		return $return;
 	}
