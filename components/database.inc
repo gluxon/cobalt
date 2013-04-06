@@ -15,9 +15,7 @@ class Database {
 	private $getResolvedAliasStmt;
 
 	public function __construct($options = null) {
-		if ($options != null) {
-			$this->connect($options);
-		}
+		if ($options != null) $this->connect($options);
 	}
 
 	/**
