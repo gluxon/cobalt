@@ -358,9 +358,10 @@ textarea:focus {
 }
 
 /* Caption Buttons */
+input {
+	margin: 2px; padding: 2px 8px;
+}
 input[type="submit"] {
-	margin: 2px 0px; padding: 2px 10px;
-
 	background-color: hsla(210,32%,93%,.2);
 	background-image: -moz-linear-gradient(center top, hsla(0,0%,100%,0.6), hsla(0,0%,100%,0.1));
 
@@ -386,6 +387,8 @@ input[type="submit"]:active {
 
 /* Select Captions */
 select {
+	margin: 2px 0px; padding: 2px;
+
 	background-color: hsl(0,0%,100%);
 	border-style: solid; border-width: 1px; border-color: hsla(210,54%,20%,.25) hsla(210,54%,20%,.27) hsla(210,54%,20%,.3); border-radius: 2px;
 }
