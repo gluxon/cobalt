@@ -13,6 +13,8 @@ session_start();
 @include('settings/sql.php');
 
 function route() {
+	global $connection;
+
 	// Initialize stage as 1
 	if (!isset($_SESSION['stage'])) $_SESSION['stage'] = 1;
 
@@ -22,11 +24,13 @@ function route() {
 	}
 
 	// Progress through stages if prerequisites are set.
-	if (welcome_passed()) $_SESSION['stage'] = 2;
-	if (settings_passed()) $_SESSION['stage'] = 3;
-	if (database_passed()) $_SESSION['stage'] = 4;
-	if (setup_passed()) $_SESSION['stage'] = 5;
-	if (admin_passed()) $_SESSION['stage'] = 6;
+	if (@$_SESSION['welcome_passed']) $_SESSION['stage'] = 2;
+	if (@$_SESSION['settings_passed']) $_SESSION['stage'] = 3;
+	if (@$_SESSION['database_passed']) $_SESSION['stage'] = 4;
+	if (@$_SESSION['setup_passed']) $_SESSION['stage'] = 5;
+	if (@$_SESSION['admin_passed']) $_SESSION['stage'] = 6;
+
+	$connection_failed = false;
 
 	if (!empty($connection)) {
 		try {
@@ -46,9 +50,10 @@ function route() {
 		$connection_failed = true;
 	}
 
-	// Conneciton success. Grab install stage.
-	if ( !empty($connection) && !isset($connection_failed) ) {
-		echo $database->getSetting('install_stage');
+	// Connection success. Grab install stage.
+	if ( !empty($connection) && !$connection_failed ) {
+		echo 'Install Stage: ' . $database->getSetting('install_stage');
+		$_SESSION['stage'] = $database->getSetting('install_stage');
 	}
 
 	switch($_SESSION['stage']) {
@@ -72,7 +77,7 @@ function route() {
 			break;
 	}
 
-	echo $_SESSION['stage'];
+	echo 'Session stage: ' . $_SESSION['stage'];
 }
 
 function printSidebar() {
@@ -99,14 +104,6 @@ function welcome() {
 		println('<input type="submit" value="Submit" />');
 		println('</form>');
 	println('</p>');
-}
-
-function welcome_passed() {
-	if (isset($_SESSION['language'])) {
-		return true;
-	} else {
-		return false;
-	}
 }
 
 function settings() {
@@ -136,16 +133,79 @@ function settings() {
 	}
 }
 
-function settings_passed() {
-	if (isset($_SESSION['settings_passed'])) {
-		return true;
+function database() {
+	// Figure out if there are connection errors and print them.
+	$error = database_errors();
+
+	$connection_failed = false;
+
+	if (!empty($_POST["database_name"]) && !$error) {
+		try {
+			// Attempt to connect to database.
+			$database = new Database();
+			$database->connect(array(
+					'host' => $_POST['database_server'],
+					'name' => $_POST['database_name'],
+					'user' => $_POST['database_user'],
+					'password' => $_POST['database_password']
+			));
+		} catch (PDOException $e) {
+			echo '<p>Error Connecting to the database. Make sure the connection
+					credentials are correct.</p>';
+		}
 	} else {
-		return false;
+		$connection_failed = true;
+	}
+
+	if ($connection_failed) {
+		database_form();
+	} else {
+		database_success($database);
 	}
 }
 
-function database() {
+function database_success($database) {
+	$sql = fopen("settings/sql.php", 'w');
+	fwrite($sql,
+		'<?php' . "\n" .
+		'$connection["host"]="' . $_POST["database_server"] . '";' . "\n" .
+		'$connection["user"]="' . $_POST["database_user"] . '";' . "\n" .
+		'$connection["password"]="' . $_POST["database_password"] . '";' . "\n" .
+		'$connection["name"]="' . $_POST["database_name"] . '";' . "\n" .
+		'?>');
 
+	$database->setSetting('install_stage', '4');
+
+	println('<p>SQL connection was a success. Please hit the next button to continue.</p>');
+
+	println('<form action="?page=4" method="post">');
+	println('<input type="submit" value="Next" />');
+	println('</form>');
+
+	$_SESSION['database_passed'] = true;
+}
+
+function database_errors() {
+	$error = false;
+
+	if (isset($_POST["database_server"]) && empty($_POST["database_server"])) {
+		println('No database server was defined' . '<br />');
+		$error = true;
+	}
+	if (isset($_POST["database_user"]) && empty($_POST["database_user"])) {
+		println('No database user was defined' . '<br />');
+		$error = true;
+	}
+	if (isset($_POST["database_password"]) && empty($_POST["database_password"])) {
+		println('No database password was defined' . '<br />');
+		$error = true;
+	}
+	if (isset($_POST["database_name"]) && empty($_POST["database_name"])) {
+		println('No database name was defined' . '<br />');
+		$error = true;
+	}
+
+	return $error;
 }
 
 function database_form() {
@@ -197,14 +257,11 @@ function database_form() {
 	println('</form>');
 }
 
-function database_passed() {
-	return false;
+function setup() {
+	echo '<p>Setup the site</p>';
 }
 
-function setup() {}
-function setup_passed() {}
 function admin() {}
-function admin_passed() {}
 function finish() {}
 ?>
 <!DOCTYPE HTML>
