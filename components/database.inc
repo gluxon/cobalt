@@ -11,6 +11,7 @@ class Database {
 	private $dbho;
 
 	private $getSettingStmt;
+	private $setSettingStmt;
 	private $updateSettingStmt;
 	private $getResolvedAliasStmt;
 
@@ -72,17 +73,39 @@ class Database {
 
 		$this->getSettingStmt->execute(array($setting));
 		$return = $this->getSettingStmt->fetch(PDO::FETCH_NUM);
-		return $return['0'];
+
+		if ($return === false) {
+			return false;
+		} else {
+			return $return['0'];
+		}
+	}
+
+	/**
+	 * Set a setting in the database
+	 * 
+	 * @param mixed $setting setting in database
+	 * @param mixed $value new value
+	 */
+	public function setSetting($setting, $value) {
+		if (is_null($this->setSettingStmt)) {
+			$this->setSettingStmt = $this->dbho->prepare("INSERT INTO settings (setting, value) VALUES (?, ?)");
+		}
+
+		if ($this->getSetting($setting) === false) {
+			$this->setSettingStmt->execute(array($setting, $value));
+		} else {
+			$this->updateSetting($setting, $value);
+		}
 	}
 
 	/**
 	 * Update a setting in the database
 	 * 
 	 * @param mixed $setting setting in database
-	 * @param mixed $value New Value
+	 * @param mixed $value value to update
 	 */
 	public function updateSetting($setting, $value) {
-
 		if (is_null($this->updateSettingStmt)) {
 			$this->updateSettingStmt = $this->dbho->prepare("UPDATE settings SET value=? WHERE setting=?");
 		}
